@@ -13,20 +13,50 @@
             font-family: 'Inter', sans-serif;
             background-color: #0d1117;
             color: #cbd5e1;
+            overflow-x: hidden;
         }
 
-        /* Custom Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Scroll Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.5, 0, 0, 1);
         }
-        
-        .animate-fade-in {
-            animation: fadeIn 1s ease-out forwards;
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
         }
+
+        /* Staggered delays for children */
+        .reveal-delay-100 { transition-delay: 100ms; }
+        .reveal-delay-200 { transition-delay: 200ms; }
+        .reveal-delay-300 { transition-delay: 300ms; }
 
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
+        }
+
+        /* Float Animation for Profile */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Gradient Animation */
+        @keyframes gradient-xy {
+            0%, 100% {
+                background-size: 200% 200%;
+                background-position: left center;
+            }
+            50% {
+                background-size: 200% 200%;
+                background-position: right center;
+            }
         }
     </style>
     <script>
@@ -39,6 +69,10 @@
                             card: '#161b22',
                             border: '#30363d'
                         }
+                    },
+                    boxShadow: {
+                        'glow-blue': '0 0 20px rgba(59, 130, 246, 0.5)',
+                        'glow-purple': '0 0 20px rgba(168, 85, 247, 0.5)',
                     }
                 }
             }
@@ -48,23 +82,23 @@
 <body class="selection:bg-blue-500/30">
 
     <!-- Navigation -->
-    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 bg-transparent">
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 bg-transparent backdrop-blur-sm">
         <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="font-bold text-xl text-white flex items-center gap-2">
-                <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white text-sm shadow-lg shadow-blue-900/20">GL</span>
-                Girish Lade
+            <div class="font-bold text-xl text-white flex items-center gap-2 group cursor-pointer">
+                <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white text-sm shadow-lg shadow-blue-900/20 group-hover:shadow-blue-500/50 transition-all duration-300 group-hover:scale-110">GL</span>
+                <span class="group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-300">Girish Lade</span>
             </div>
             <div class="hidden md:flex items-center gap-8 text-sm font-medium">
-                <a href="#about" class="hover:text-blue-400 transition-colors">About</a>
-                <a href="#focus" class="hover:text-blue-400 transition-colors">Focus</a>
-                <a href="#tech" class="hover:text-blue-400 transition-colors">Tech</a>
-                <a href="#projects" class="hover:text-blue-400 transition-colors">Projects</a>
-                <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-full text-xs font-semibold transition-all border border-slate-700 hover:border-slate-500">
+                <a href="#about" class="relative hover:text-white transition-colors after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-blue-500 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">About</a>
+                <a href="#focus" class="relative hover:text-white transition-colors after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-blue-500 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">Focus</a>
+                <a href="#tech" class="relative hover:text-white transition-colors after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-blue-500 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">Tech</a>
+                <a href="#projects" class="relative hover:text-white transition-colors after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-blue-500 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">Projects</a>
+                <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-full text-xs font-semibold transition-all duration-300 border border-slate-700 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 active:scale-95">
                     Resume
                 </button>
             </div>
-            <!-- Mobile Menu Button (Simple implementation) -->
-            <button class="md:hidden text-white" onclick="alert('Mobile menu would open here')">
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-white hover:text-blue-400 transition-colors" onclick="alert('Mobile menu would open here')">
                 <i data-lucide="menu" class="w-6 h-6"></i>
             </button>
         </div>
@@ -73,216 +107,219 @@
     <main class="max-w-4xl mx-auto px-6 pt-32 pb-20">
 
         <!-- Hero Section -->
-        <section id="about" class="mb-24 flex flex-col md:flex-row gap-12 items-center animate-fade-in">
-            <div class="relative group">
-                <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-1000 group-hover:duration-200"></div>
-                <div class="relative w-48 h-48 rounded-full overflow-hidden border-4 border-[#0d1117]">
+        <section id="about" class="mb-24 flex flex-col md:flex-row gap-12 items-center reveal">
+            <div class="relative group cursor-pointer">
+                <!-- Glowing ring behind image -->
+                <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 rounded-full opacity-75 group-hover:opacity-100 blur-md transition duration-500 group-hover:duration-200 animate-spin-slow" style="animation-duration: 3s;"></div>
+                <div class="relative w-48 h-48 rounded-full overflow-hidden border-4 border-[#0d1117] animate-float">
                     <img 
                         src="https://avatars.githubusercontent.com/u/104373673?v=4" 
                         onerror="this.src='https://ui-avatars.com/api/?name=Girish+Lade&background=0D8ABC&color=fff&size=256'"
                         alt="Girish Balaso Lade" 
-                        class="w-full h-full object-cover transform transition duration-500 group-hover:scale-110"
+                        class="w-full h-full object-cover transform transition duration-700 group-hover:scale-110"
                     />
                 </div>
-                <div class="absolute bottom-2 right-4 text-2xl animate-bounce">👋</div>
+                <div class="absolute bottom-4 right-4 text-3xl animate-bounce hover:rotate-12 transition-transform cursor-default">👋</div>
             </div>
             
             <div class="flex-1 text-center md:text-left">
-                <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
-                    Hi, I'm <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Girish Balaso Lade</span>
+                <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight">
+                    Hi, I'm <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 animate-gradient-x bg-[length:200%_auto]" style="animation: gradient-xy 3s ease infinite;">Girish Balaso Lade</span>
                 </h1>
-                <p class="text-xl text-slate-400 mb-6 font-light">
+                <p class="text-xl text-slate-400 mb-6 font-light reveal reveal-delay-100">
                     UI/UX Engineer • AI Tool Builder • Creative Technologist
                 </p>
-                <p class="text-slate-400 leading-relaxed mb-8 max-w-xl">
+                <p class="text-slate-400 leading-relaxed mb-8 max-w-xl reveal reveal-delay-200">
                     I'm passionate about building interactive web experiences and exploring the intersection of design and artificial intelligence. Currently crafting digital solutions that merge functionality with aesthetics.
                 </p>
                 
-                <div class="flex flex-wrap gap-4 justify-center md:justify-start">
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-white transition-all border border-slate-700 group hover:border-slate-500">
-                        <i data-lucide="github" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                <div class="flex flex-wrap gap-4 justify-center md:justify-start reveal reveal-delay-300">
+                    <a href="#" class="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-white transition-all duration-300 border border-slate-700 hover:border-white/50 group shadow-lg hover:shadow-white/10 hover:-translate-y-1 active:scale-95">
+                        <i data-lucide="github" class="w-5 h-5 group-hover:rotate-12 transition-transform"></i>
                         <span>GitHub</span>
                     </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 bg-[#0077b5] hover:bg-[#006396] rounded-lg text-white transition-all shadow-lg shadow-blue-900/20 group">
-                        <i data-lucide="linkedin" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                    <a href="#" class="flex items-center gap-2 px-5 py-2.5 bg-[#0077b5] hover:bg-[#006396] rounded-lg text-white transition-all duration-300 shadow-lg shadow-blue-900/20 hover:shadow-blue-500/40 group hover:-translate-y-1 active:scale-95">
+                        <i data-lucide="linkedin" class="w-5 h-5 group-hover:-rotate-12 transition-transform"></i>
                         <span>LinkedIn</span>
                     </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-white transition-all border border-slate-700 group hover:border-slate-500">
-                        <i data-lucide="twitter" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                    <a href="#" class="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-white transition-all duration-300 border border-slate-700 hover:border-blue-400 group shadow-lg hover:shadow-blue-400/20 hover:-translate-y-1 active:scale-95">
+                        <i data-lucide="twitter" class="w-5 h-5 group-hover:rotate-12 transition-transform text-blue-400"></i>
                         <span>Twitter</span>
                     </a>
                 </div>
 
-                <div class="mt-8 flex gap-6 text-xs text-slate-500 justify-center md:justify-start">
-                    <div class="flex items-center gap-1">
+                <div class="mt-8 flex gap-6 text-xs text-slate-500 justify-center md:justify-start reveal reveal-delay-300">
+                    <div class="flex items-center gap-1 hover:text-blue-400 transition-colors cursor-default">
                         <i data-lucide="map-pin" class="w-3 h-3"></i> Pune, India
                     </div>
-                    <div class="flex items-center gap-1">
+                    <div class="flex items-center gap-1 hover:text-green-400 transition-colors cursor-default">
                         <i data-lucide="briefcase" class="w-3 h-3"></i> Open to Opportunities
                     </div>
-                    <div class="flex items-center gap-1">
+                    <div class="flex items-center gap-1 hover:text-purple-400 transition-colors cursor-default">
                         <i data-lucide="users" class="w-3 h-3"></i> 250+ Followers
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="w-full h-px bg-slate-800 mb-20"></div>
+        <div class="w-full h-px bg-gradient-to-r from-transparent via-slate-800 to-transparent mb-20"></div>
 
         <!-- Professional Focus -->
-        <section id="focus" class="mb-24 scroll-mt-24">
+        <section id="focus" class="mb-24 scroll-mt-24 reveal">
             <h2 class="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-                <span class="w-8 h-1 bg-blue-500 rounded-full"></span>
+                <span class="w-8 h-1 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.8)]"></span>
                 Professional Focus
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Card 1 -->
-                <div class="bg-dark-card border border-dark-border p-6 rounded-xl hover:border-blue-500/50 transition-all hover:shadow-lg hover:shadow-blue-900/10 group">
-                    <div class="mb-4 bg-slate-800/50 w-10 h-10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <i data-lucide="zap" class="w-5 h-5 text-yellow-400"></i>
+                <div class="bg-dark-card border border-dark-border p-6 rounded-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-yellow-500/10 hover:border-yellow-500/30 group cursor-default">
+                    <div class="mb-4 bg-slate-800/50 w-12 h-12 rounded-lg flex items-center justify-center group-hover:scale-110 group-hover:bg-yellow-500/20 transition-all duration-300">
+                        <i data-lucide="zap" class="w-6 h-6 text-yellow-400 group-hover:text-yellow-300"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">Product Development</h3>
-                    <p class="text-slate-400 text-sm">Crafting user-centric products from concept to launch with a focus on UX.</p>
+                    <h3 class="text-lg font-semibold text-white mb-2 group-hover:text-yellow-400 transition-colors">Product Development</h3>
+                    <p class="text-slate-400 text-sm group-hover:text-slate-300 transition-colors">Crafting user-centric products from concept to launch with a focus on UX.</p>
                 </div>
                 <!-- Card 2 -->
-                <div class="bg-dark-card border border-dark-border p-6 rounded-xl hover:border-blue-500/50 transition-all hover:shadow-lg hover:shadow-blue-900/10 group">
-                    <div class="mb-4 bg-slate-800/50 w-10 h-10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <i data-lucide="layout" class="w-5 h-5 text-blue-400"></i>
+                <div class="bg-dark-card border border-dark-border p-6 rounded-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/10 hover:border-blue-500/30 group cursor-default">
+                    <div class="mb-4 bg-slate-800/50 w-12 h-12 rounded-lg flex items-center justify-center group-hover:scale-110 group-hover:bg-blue-500/20 transition-all duration-300">
+                        <i data-lucide="layout" class="w-6 h-6 text-blue-400 group-hover:text-blue-300"></i>
                     </div>
                     <h3 class="text-lg font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">Web Architecture</h3>
-                    <p class="text-slate-400 text-sm">Designing scalable and maintainable frontend systems.</p>
+                    <p class="text-slate-400 text-sm group-hover:text-slate-300 transition-colors">Designing scalable and maintainable frontend systems.</p>
                 </div>
                 <!-- Card 3 -->
-                <div class="bg-dark-card border border-dark-border p-6 rounded-xl hover:border-blue-500/50 transition-all hover:shadow-lg hover:shadow-blue-900/10 group">
-                    <div class="mb-4 bg-slate-800/50 w-10 h-10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <i data-lucide="cpu" class="w-5 h-5 text-purple-400"></i>
+                <div class="bg-dark-card border border-dark-border p-6 rounded-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10 hover:border-purple-500/30 group cursor-default">
+                    <div class="mb-4 bg-slate-800/50 w-12 h-12 rounded-lg flex items-center justify-center group-hover:scale-110 group-hover:bg-purple-500/20 transition-all duration-300">
+                        <i data-lucide="cpu" class="w-6 h-6 text-purple-400 group-hover:text-purple-300"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">AI Integration</h3>
-                    <p class="text-slate-400 text-sm">Bridging the gap between complex AI models and intuitive user interfaces.</p>
+                    <h3 class="text-lg font-semibold text-white mb-2 group-hover:text-purple-400 transition-colors">AI Integration</h3>
+                    <p class="text-slate-400 text-sm group-hover:text-slate-300 transition-colors">Bridging the gap between complex AI models and intuitive user interfaces.</p>
                 </div>
                 <!-- Card 4 -->
-                <div class="bg-dark-card border border-dark-border p-6 rounded-xl hover:border-blue-500/50 transition-all hover:shadow-lg hover:shadow-blue-900/10 group">
-                    <div class="mb-4 bg-slate-800/50 w-10 h-10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <i data-lucide="palette" class="w-5 h-5 text-pink-400"></i>
+                <div class="bg-dark-card border border-dark-border p-6 rounded-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-pink-500/10 hover:border-pink-500/30 group cursor-default">
+                    <div class="mb-4 bg-slate-800/50 w-12 h-12 rounded-lg flex items-center justify-center group-hover:scale-110 group-hover:bg-pink-500/20 transition-all duration-300">
+                        <i data-lucide="palette" class="w-6 h-6 text-pink-400 group-hover:text-pink-300"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">Creative Direction</h3>
-                    <p class="text-slate-400 text-sm">Building consistent visual identities and design systems.</p>
+                    <h3 class="text-lg font-semibold text-white mb-2 group-hover:text-pink-400 transition-colors">Creative Direction</h3>
+                    <p class="text-slate-400 text-sm group-hover:text-slate-300 transition-colors">Building consistent visual identities and design systems.</p>
                 </div>
             </div>
         </section>
 
         <!-- Tech Toolbox -->
-        <section id="tech" class="mb-24 scroll-mt-24">
+        <section id="tech" class="mb-24 scroll-mt-24 reveal">
             <h2 class="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-                <span class="w-8 h-1 bg-purple-500 rounded-full"></span>
+                <span class="w-8 h-1 bg-purple-500 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.8)]"></span>
                 Tech Toolbox
             </h2>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="skills-container">
-                <!-- Skills injected by JS below for cleaner HTML, or hardcoded -->
-                <!-- Hardcoding for clarity in file generation -->
-                <div class="flex items-center gap-3 p-4 rounded-xl border border-dark-border bg-dark-card hover:border-slate-600 transition-all cursor-default group">
-                    <div class="p-2 rounded-lg bg-blue-400/10 text-blue-400 group-hover:scale-110 transition-transform"><i data-lucide="code-2" class="w-6 h-6"></i></div>
-                    <span class="font-medium text-slate-300">React</span>
+                <div class="flex items-center gap-3 p-4 rounded-xl border border-dark-border bg-dark-card hover:bg-slate-800/50 transition-all duration-300 cursor-default group hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-500/30">
+                    <div class="p-2 rounded-lg bg-blue-400/10 text-blue-400 group-hover:scale-110 group-hover:rotate-6 transition-transform"><i data-lucide="code-2" class="w-6 h-6"></i></div>
+                    <span class="font-medium text-slate-300 group-hover:text-white">React</span>
                 </div>
-                <div class="flex items-center gap-3 p-4 rounded-xl border border-dark-border bg-dark-card hover:border-slate-600 transition-all cursor-default group">
-                    <div class="p-2 rounded-lg bg-blue-600/10 text-blue-600 group-hover:scale-110 transition-transform"><i data-lucide="terminal" class="w-6 h-6"></i></div>
-                    <span class="font-medium text-slate-300">TypeScript</span>
+                <div class="flex items-center gap-3 p-4 rounded-xl border border-dark-border bg-dark-card hover:bg-slate-800/50 transition-all duration-300 cursor-default group hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-600/10 hover:border-blue-600/30">
+                    <div class="p-2 rounded-lg bg-blue-600/10 text-blue-600 group-hover:scale-110 group-hover:-rotate-6 transition-transform"><i data-lucide="terminal" class="w-6 h-6"></i></div>
+                    <span class="font-medium text-slate-300 group-hover:text-white">TypeScript</span>
                 </div>
-                <div class="flex items-center gap-3 p-4 rounded-xl border border-dark-border bg-dark-card hover:border-slate-600 transition-all cursor-default group">
-                    <div class="p-2 rounded-lg bg-cyan-400/10 text-cyan-400 group-hover:scale-110 transition-transform"><i data-lucide="layout" class="w-6 h-6"></i></div>
-                    <span class="font-medium text-slate-300">Tailwind</span>
+                <div class="flex items-center gap-3 p-4 rounded-xl border border-dark-border bg-dark-card hover:bg-slate-800/50 transition-all duration-300 cursor-default group hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-400/10 hover:border-cyan-400/30">
+                    <div class="p-2 rounded-lg bg-cyan-400/10 text-cyan-400 group-hover:scale-110 group-hover:rotate-6 transition-transform"><i data-lucide="layout" class="w-6 h-6"></i></div>
+                    <span class="font-medium text-slate-300 group-hover:text-white">Tailwind</span>
                 </div>
-                <div class="flex items-center gap-3 p-4 rounded-xl border border-dark-border bg-dark-card hover:border-slate-600 transition-all cursor-default group">
-                    <div class="p-2 rounded-lg bg-green-500/10 text-green-500 group-hover:scale-110 transition-transform"><i data-lucide="database" class="w-6 h-6"></i></div>
-                    <span class="font-medium text-slate-300">Node.js</span>
+                <div class="flex items-center gap-3 p-4 rounded-xl border border-dark-border bg-dark-card hover:bg-slate-800/50 transition-all duration-300 cursor-default group hover:-translate-y-1 hover:shadow-lg hover:shadow-green-500/10 hover:border-green-500/30">
+                    <div class="p-2 rounded-lg bg-green-500/10 text-green-500 group-hover:scale-110 group-hover:-rotate-6 transition-transform"><i data-lucide="database" class="w-6 h-6"></i></div>
+                    <span class="font-medium text-slate-300 group-hover:text-white">Node.js</span>
                 </div>
-                <div class="flex items-center gap-3 p-4 rounded-xl border border-dark-border bg-dark-card hover:border-slate-600 transition-all cursor-default group">
-                    <div class="p-2 rounded-lg bg-yellow-400/10 text-yellow-400 group-hover:scale-110 transition-transform"><i data-lucide="code-2" class="w-6 h-6"></i></div>
-                    <span class="font-medium text-slate-300">Python</span>
+                <div class="flex items-center gap-3 p-4 rounded-xl border border-dark-border bg-dark-card hover:bg-slate-800/50 transition-all duration-300 cursor-default group hover:-translate-y-1 hover:shadow-lg hover:shadow-yellow-400/10 hover:border-yellow-400/30">
+                    <div class="p-2 rounded-lg bg-yellow-400/10 text-yellow-400 group-hover:scale-110 group-hover:rotate-6 transition-transform"><i data-lucide="code-2" class="w-6 h-6"></i></div>
+                    <span class="font-medium text-slate-300 group-hover:text-white">Python</span>
                 </div>
-                <div class="flex items-center gap-3 p-4 rounded-xl border border-dark-border bg-dark-card hover:border-slate-600 transition-all cursor-default group">
-                    <div class="p-2 rounded-lg bg-purple-400/10 text-purple-400 group-hover:scale-110 transition-transform"><i data-lucide="palette" class="w-6 h-6"></i></div>
-                    <span class="font-medium text-slate-300">Figma</span>
+                <div class="flex items-center gap-3 p-4 rounded-xl border border-dark-border bg-dark-card hover:bg-slate-800/50 transition-all duration-300 cursor-default group hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-400/10 hover:border-purple-400/30">
+                    <div class="p-2 rounded-lg bg-purple-400/10 text-purple-400 group-hover:scale-110 group-hover:-rotate-6 transition-transform"><i data-lucide="palette" class="w-6 h-6"></i></div>
+                    <span class="font-medium text-slate-300 group-hover:text-white">Figma</span>
                 </div>
-                <div class="flex items-center gap-3 p-4 rounded-xl border border-dark-border bg-dark-card hover:border-slate-600 transition-all cursor-default group">
-                    <div class="p-2 rounded-lg bg-red-400/10 text-red-400 group-hover:scale-110 transition-transform"><i data-lucide="cpu" class="w-6 h-6"></i></div>
-                    <span class="font-medium text-slate-300">AI/ML</span>
+                <div class="flex items-center gap-3 p-4 rounded-xl border border-dark-border bg-dark-card hover:bg-slate-800/50 transition-all duration-300 cursor-default group hover:-translate-y-1 hover:shadow-lg hover:shadow-red-400/10 hover:border-red-400/30">
+                    <div class="p-2 rounded-lg bg-red-400/10 text-red-400 group-hover:scale-110 group-hover:rotate-6 transition-transform"><i data-lucide="cpu" class="w-6 h-6"></i></div>
+                    <span class="font-medium text-slate-300 group-hover:text-white">AI/ML</span>
                 </div>
-                <div class="flex items-center gap-3 p-4 rounded-xl border border-dark-border bg-dark-card hover:border-slate-600 transition-all cursor-default group">
-                    <div class="p-2 rounded-lg bg-orange-400/10 text-orange-400 group-hover:scale-110 transition-transform"><i data-lucide="github" class="w-6 h-6"></i></div>
-                    <span class="font-medium text-slate-300">Git</span>
+                <div class="flex items-center gap-3 p-4 rounded-xl border border-dark-border bg-dark-card hover:bg-slate-800/50 transition-all duration-300 cursor-default group hover:-translate-y-1 hover:shadow-lg hover:shadow-orange-400/10 hover:border-orange-400/30">
+                    <div class="p-2 rounded-lg bg-orange-400/10 text-orange-400 group-hover:scale-110 group-hover:-rotate-6 transition-transform"><i data-lucide="github" class="w-6 h-6"></i></div>
+                    <span class="font-medium text-slate-300 group-hover:text-white">Git</span>
                 </div>
             </div>
         </section>
 
         <!-- Featured Projects -->
-        <section id="projects" class="mb-24 scroll-mt-24">
+        <section id="projects" class="mb-24 scroll-mt-24 reveal">
             <h2 class="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-                <span class="w-8 h-1 bg-green-500 rounded-full"></span>
+                <span class="w-8 h-1 bg-green-500 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.8)]"></span>
                 Featured Projects
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Project 1 -->
-                <div class="bg-dark-card rounded-xl overflow-hidden border border-dark-border hover:border-slate-600 transition-all group flex flex-col">
-                    <div class="h-2 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
-                    <div class="p-6 flex-1 flex flex-col">
+                <div class="bg-dark-card rounded-xl overflow-hidden border border-dark-border transition-all duration-300 hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-2 group flex flex-col relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="h-2 bg-gradient-to-r from-blue-500 to-cyan-500 group-hover:h-3 transition-all duration-300"></div>
+                    <div class="p-6 flex-1 flex flex-col relative z-10">
                         <div class="flex justify-between items-start mb-4">
                             <h3 class="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">Portfolio V2</h3>
-                            <i data-lucide="external-link" class="w-5 h-5 text-slate-500 hover:text-white cursor-pointer"></i>
+                            <i data-lucide="external-link" class="w-5 h-5 text-slate-500 hover:text-white cursor-pointer hover:scale-110 transition-transform"></i>
                         </div>
-                        <p class="text-slate-400 text-sm mb-6 flex-1">A modern developer portfolio built with React and Tailwind CSS.</p>
+                        <p class="text-slate-400 text-sm mb-6 flex-1 group-hover:text-slate-300">A modern developer portfolio built with React and Tailwind CSS.</p>
                         <div class="flex flex-wrap gap-2">
-                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700">React</span>
-                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700">Tailwind</span>
-                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700">Framer</span>
+                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700 group-hover:border-blue-500/30 transition-colors">React</span>
+                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700 group-hover:border-blue-500/30 transition-colors">Tailwind</span>
+                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700 group-hover:border-blue-500/30 transition-colors">Framer</span>
                         </div>
                     </div>
                 </div>
                 <!-- Project 2 -->
-                <div class="bg-dark-card rounded-xl overflow-hidden border border-dark-border hover:border-slate-600 transition-all group flex flex-col">
-                    <div class="h-2 bg-gradient-to-r from-purple-500 to-pink-500"></div>
-                    <div class="p-6 flex-1 flex flex-col">
+                <div class="bg-dark-card rounded-xl overflow-hidden border border-dark-border transition-all duration-300 hover:border-purple-500/50 hover:shadow-2xl hover:shadow-purple-500/10 hover:-translate-y-2 group flex flex-col relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="h-2 bg-gradient-to-r from-purple-500 to-pink-500 group-hover:h-3 transition-all duration-300"></div>
+                    <div class="p-6 flex-1 flex flex-col relative z-10">
                         <div class="flex justify-between items-start mb-4">
-                            <h3 class="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">AI Image Generator</h3>
-                            <i data-lucide="external-link" class="w-5 h-5 text-slate-500 hover:text-white cursor-pointer"></i>
+                            <h3 class="text-lg font-bold text-white group-hover:text-purple-400 transition-colors">AI Image Generator</h3>
+                            <i data-lucide="external-link" class="w-5 h-5 text-slate-500 hover:text-white cursor-pointer hover:scale-110 transition-transform"></i>
                         </div>
-                        <p class="text-slate-400 text-sm mb-6 flex-1">Generative AI tool for creating unique artwork from text prompts.</p>
+                        <p class="text-slate-400 text-sm mb-6 flex-1 group-hover:text-slate-300">Generative AI tool for creating unique artwork from text prompts.</p>
                         <div class="flex flex-wrap gap-2">
-                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700">Python</span>
-                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700">TensorFlow</span>
-                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700">React</span>
+                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700 group-hover:border-purple-500/30 transition-colors">Python</span>
+                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700 group-hover:border-purple-500/30 transition-colors">TensorFlow</span>
+                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700 group-hover:border-purple-500/30 transition-colors">React</span>
                         </div>
                     </div>
                 </div>
                 <!-- Project 3 -->
-                <div class="bg-dark-card rounded-xl overflow-hidden border border-dark-border hover:border-slate-600 transition-all group flex flex-col">
-                    <div class="h-2 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
-                    <div class="p-6 flex-1 flex flex-col">
+                <div class="bg-dark-card rounded-xl overflow-hidden border border-dark-border transition-all duration-300 hover:border-emerald-500/50 hover:shadow-2xl hover:shadow-emerald-500/10 hover:-translate-y-2 group flex flex-col relative">
+                     <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="h-2 bg-gradient-to-r from-emerald-500 to-teal-500 group-hover:h-3 transition-all duration-300"></div>
+                    <div class="p-6 flex-1 flex flex-col relative z-10">
                         <div class="flex justify-between items-start mb-4">
-                            <h3 class="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">E-Commerce Dashboard</h3>
-                            <i data-lucide="external-link" class="w-5 h-5 text-slate-500 hover:text-white cursor-pointer"></i>
+                            <h3 class="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors">E-Commerce Dashboard</h3>
+                            <i data-lucide="external-link" class="w-5 h-5 text-slate-500 hover:text-white cursor-pointer hover:scale-110 transition-transform"></i>
                         </div>
-                        <p class="text-slate-400 text-sm mb-6 flex-1">Full-stack analytics dashboard for online retailers.</p>
+                        <p class="text-slate-400 text-sm mb-6 flex-1 group-hover:text-slate-300">Full-stack analytics dashboard for online retailers.</p>
                         <div class="flex flex-wrap gap-2">
-                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700">Next.js</span>
-                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700">PostgreSQL</span>
-                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700">Chart.js</span>
+                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700 group-hover:border-emerald-500/30 transition-colors">Next.js</span>
+                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700 group-hover:border-emerald-500/30 transition-colors">PostgreSQL</span>
+                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700 group-hover:border-emerald-500/30 transition-colors">Chart.js</span>
                         </div>
                     </div>
                 </div>
                 <!-- Project 4 -->
-                <div class="bg-dark-card rounded-xl overflow-hidden border border-dark-border hover:border-slate-600 transition-all group flex flex-col">
-                    <div class="h-2 bg-gradient-to-r from-orange-500 to-red-500"></div>
-                    <div class="p-6 flex-1 flex flex-col">
+                <div class="bg-dark-card rounded-xl overflow-hidden border border-dark-border transition-all duration-300 hover:border-orange-500/50 hover:shadow-2xl hover:shadow-orange-500/10 hover:-translate-y-2 group flex flex-col relative">
+                     <div class="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="h-2 bg-gradient-to-r from-orange-500 to-red-500 group-hover:h-3 transition-all duration-300"></div>
+                    <div class="p-6 flex-1 flex flex-col relative z-10">
                         <div class="flex justify-between items-start mb-4">
-                            <h3 class="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">Social Connect</h3>
-                            <i data-lucide="external-link" class="w-5 h-5 text-slate-500 hover:text-white cursor-pointer"></i>
+                            <h3 class="text-lg font-bold text-white group-hover:text-orange-400 transition-colors">Social Connect</h3>
+                            <i data-lucide="external-link" class="w-5 h-5 text-slate-500 hover:text-white cursor-pointer hover:scale-110 transition-transform"></i>
                         </div>
-                        <p class="text-slate-400 text-sm mb-6 flex-1">Real-time messaging platform with end-to-end encryption.</p>
+                        <p class="text-slate-400 text-sm mb-6 flex-1 group-hover:text-slate-300">Real-time messaging platform with end-to-end encryption.</p>
                         <div class="flex flex-wrap gap-2">
-                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700">Socket.io</span>
-                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700">Node.js</span>
-                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700">Redis</span>
+                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700 group-hover:border-orange-500/30 transition-colors">Socket.io</span>
+                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700 group-hover:border-orange-500/30 transition-colors">Node.js</span>
+                            <span class="px-2 py-1 bg-slate-800 text-xs rounded text-slate-300 border border-slate-700 group-hover:border-orange-500/30 transition-colors">Redis</span>
                         </div>
                     </div>
                 </div>
@@ -290,31 +327,31 @@
         </section>
 
         <!-- GitHub Stats -->
-        <section class="mb-24">
+        <section class="mb-24 reveal">
             <h2 class="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-                <span class="w-8 h-1 bg-orange-500 rounded-full"></span>
+                <span class="w-8 h-1 bg-orange-500 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.8)]"></span>
                 GitHub Activity
             </h2>
-            <div class="bg-dark-card border border-dark-border rounded-xl p-6 overflow-hidden relative">
+            <div class="bg-dark-card border border-dark-border rounded-xl p-6 overflow-hidden relative group hover:border-slate-600 transition-all duration-300">
                 <!-- JS generated graph -->
-                <div id="github-graph" class="flex items-end justify-between gap-1 h-32 opacity-50">
+                <div id="github-graph" class="flex items-end justify-between gap-1 h-32 opacity-50 group-hover:opacity-80 transition-opacity duration-500">
                     <!-- Bars injected here -->
                 </div>
                 <div class="mt-6 flex justify-between items-center text-sm">
                     <span class="text-slate-400">1,234 Contributions in the last year</span>
-                    <a href="#" class="text-blue-400 hover:underline">View GitHub Profile →</a>
+                    <a href="#" class="text-blue-400 hover:underline hover:text-blue-300 transition-colors">View GitHub Profile →</a>
                 </div>
             </div>
         </section>
 
         <!-- Connect Section -->
-        <section class="text-center py-12 bg-gradient-to-b from-dark-card to-transparent rounded-2xl border border-slate-800/50">
+        <section class="text-center py-12 bg-gradient-to-b from-dark-card to-transparent rounded-2xl border border-slate-800/50 reveal hover:border-slate-700 transition-colors duration-300">
             <h2 class="text-3xl font-bold text-white mb-4">Let's Build Something Together</h2>
             <p class="text-slate-400 mb-8 max-w-lg mx-auto">
                 I'm currently available for freelance work and full-time opportunities.
                 If you have a project that needs some creative tech magic, I'd love to hear about it.
             </p>
-            <a href="mailto:contact@girishlade.com" class="inline-flex items-center gap-2 px-8 py-3 bg-white text-black font-bold rounded-full hover:bg-slate-200 transition-colors shadow-lg shadow-white/10">
+            <a href="mailto:contact@girishlade.com" class="inline-flex items-center gap-2 px-8 py-3 bg-white text-black font-bold rounded-full hover:bg-slate-200 transition-all duration-300 shadow-lg shadow-white/10 hover:shadow-white/30 hover:-translate-y-1 active:scale-95">
                 <i data-lucide="mail" class="w-5 h-5"></i>
                 Get In Touch
             </a>
@@ -323,8 +360,8 @@
     </main>
 
     <footer class="border-t border-slate-800 bg-[#0d1117] py-8 text-center text-slate-500 text-sm">
-        <p class="flex items-center justify-center gap-2">
-            Made with <i data-lucide="heart" class="w-4 h-4 text-red-500 fill-current"></i> by Girish Lade
+        <p class="flex items-center justify-center gap-2 group cursor-default">
+            Made with <i data-lucide="heart" class="w-4 h-4 text-red-500 fill-current group-hover:scale-125 transition-transform duration-300"></i> by Girish Lade
         </p>
         <p class="mt-2 text-xs">© 2025 All Rights Reserved</p>
     </footer>
@@ -354,12 +391,35 @@
             const opacity = Math.random() * 0.5 + 0.3; // 0.3 to 0.8
             
             const bar = document.createElement('div');
-            bar.className = 'w-full bg-green-500 rounded-t-sm hover:bg-green-400 transition-colors';
+            bar.className = 'w-full bg-green-500 rounded-t-sm transition-all duration-300 hover:bg-green-400 hover:scale-y-110 origin-bottom';
             bar.style.height = `${height}%`;
             bar.style.opacity = opacity;
             
+            // Add slight animation delay for wave effect on load
+            bar.style.animation = `fadeIn 0.5s ease-out ${i * 0.05}s backwards`;
+            
             graphContainer.appendChild(bar);
         }
+
+        // Intersection Observer for Scroll Animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => {
+            observer.observe(el);
+        });
     </script>
 </body>
 </html>
